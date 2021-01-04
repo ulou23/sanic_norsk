@@ -1,11 +1,30 @@
-from sanic import Sanic
+
 from sanic.response import json
 
-app=Sanic("loveee")
+import logging
+
+from models import Users
+from sanic import Sanic,response
+from tortoise.contrib.sanic import register_tortoise
+
+logging.basicConfig(level=logging.DEBUG)
+
+app=Sanic(__name__)
 
 @app.route("/")
-async def test(req):
-    return json({"love":"not"})
+async def list_all(request):
+    users=await Users.all()
+    return response.json({'users': [str(user) for user in users]})
+
+@app.route("/user")
+async def add_user(request):
+    user=await Users.create(name="new")
+    return response.json({'user':str(user)})
+
+register_tortoise(
+    app, db_url="sqlite://:memory",modules={"models": ["models"]},generate_schemas=True
+)
+
 
 if __name__=="__main__":
-    app.run(host="0.0.0.0",port=8080)
+    app.run(port=5000)
