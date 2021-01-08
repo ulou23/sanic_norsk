@@ -8,9 +8,13 @@ from sanic import Sanic,response
 from sanic.log import logger
 from tortoise.contrib.sanic import register_tortoise
 
+from blue_controller import blue
+
 logging.basicConfig(level=logging.DEBUG)
 
 app=Sanic(__name__)
+
+app.blueprint(blue)
 
 @app.route('/')
 async def req_get(request):
