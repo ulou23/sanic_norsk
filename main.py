@@ -12,9 +12,11 @@ from blue_controller import blue
 
 logging.basicConfig(level=logging.DEBUG)
 
-app=Sanic(__name__)
+app=Sanic("love server")
 
 app.blueprint(blue)
+
+app.static('/cat','cat.png')
 
 @app.route('/')
 async def req_get(request):
@@ -30,6 +32,14 @@ async def req_get(request):
 @app.route('file/')
 async def post_file(request):
     return json({"received": True, "file_names": request.method, "params":request.host})
+
+@app.route('/post',methods=['POST'])
+def post_sth(request):
+    try:
+        return response.json({"content":request.json})
+    except Exception as ex:
+        import traceback
+        logger.error(f'{traceback.format_exc()}')
 
 #@app.route("/users")
 #async def list_all(request):
